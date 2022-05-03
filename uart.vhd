@@ -18,8 +18,8 @@ end UART_RX;
 
 -------------------------------------------------
 architecture behavioral of UART_RX is
-signal cnt1 	: std_logic_vector(4 downto 0) := (others => '0');
-signal cnt2 	: std_logic_vector(3 downto 0) := (others => '0');
+signal cnt1 	: std_logic_vector(4 downto 0);
+signal cnt2 	: std_logic_vector(3 downto 0);
 signal recive	: std_logic;
 signal counter	: std_logic;
 signal data		: std_logic;
@@ -33,8 +33,9 @@ begin
 				CNT2		=> cnt2,
 				RX_EN		=> recive,
 				CNT_EN 		=> counter,
-				DOUT_FSM	=> data
+				VALID    => data
 			);
+			DOUT_VLD <= data;
 		SET: process (CLK) begin 
 			if rising_edge(CLK) then 
 				if counter = '1' then 

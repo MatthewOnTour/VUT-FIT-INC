@@ -14,7 +14,7 @@ port(
 	CNT2		: in std_logic_vector(3 downto 0);
 	RX_EN		: out std_logic;
 	CNT_EN		: out std_logic;
-	DOUT_FSM	: out std_logic	
+	VALID    : out std_logic
    );
 end entity UART_FSM;
 
@@ -23,7 +23,9 @@ architecture behavioral of UART_FSM is
 type STATE_TYPE is (START_BIT, FIRST_BIT, STOP_BIT, RECIVE_DATA, VALID_DATA);
 signal state : STATE_TYPE := START_BIT;
 
-begin	RX_EN <= '1' when state = RECIVE_DATA else '0';	CNT_EN <= '1' when state = RECIVE_DATA or state = FIRST_BIT else '0';	
+begin	RX_EN <= '1' when state = RECIVE_DATA else '0';
+		CNT_EN <= '1' when state = RECIVE_DATA or state = FIRST_BIT else '0';
+		VALID <= '1' when state = VALID_DATA else '0';
 	set_state: process (CLK) begin 	
 		if rising_edge(CLK) then 
 				if RST = '1' then 
@@ -33,7 +35,7 @@ begin	RX_EN <= '1' when state = RECIVE_DATA else '0';	CNT_EN <= '1' when state =
 						when START_BIT => if DIN = '0' then 
 												state <= FIRST_BIT;
 												end if;
-						when FIRST_BIT => if CNT1 = "10111" then
+						when FIRST_BIT => if CNT1 = "10110" then
 												state <= RECIVE_DATA;
 												end if;
 						when RECIVE_DATA => if CNT2 = "1000" then 
@@ -45,6 +47,7 @@ begin	RX_EN <= '1' when state = RECIVE_DATA else '0';	CNT_EN <= '1' when state =
 						when VALID_DATA => state <= START_BIT;
 						when others => null;
 						end case;
+						
 					end if;
 		end if;
 	end process;
